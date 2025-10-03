@@ -6,12 +6,12 @@ commands.testMode = true
 function commands.execAsync(command)
   print("Executing command asynchronously: " .. command)
   error("Currently, async commands not supported.")
-  return true, "Command executed successfully" -- FIXME: this is wrong.
+  return true, { "Command executed successfully" } -- FIXME: this is wrong.
 end
 
 function commands.exec(command)
   print("Executing command: " .. command)
-  return true, "Command executed successfully"
+  return true, { "Command executed successfully" }
 end
 
 function commands.getBlockInfo()

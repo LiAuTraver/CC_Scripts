@@ -2,6 +2,8 @@
 --- aims to fix the problems of WorldEdit
 --- that not respecting block states when replacing blocks.
 
+-- idk why this is needed, also does the `/` at the end.
+package.path = package.path .. ";/?.lua"
 
 local Variants = require("accat.wePlus.Variants")
 local Specials = require("accat.wePlus.Specials")
@@ -32,7 +34,20 @@ local function getCommands(pos1, pos2, from_variant, to_variant, variant_table, 
   allCommands[#allCommands + 1] = "//pos2 " .. pos2.x .. "," .. pos2.y .. "," .. pos2.z
 
 
-  local allCombinations = utils:generateCombinations(variant_table)
+  local allCombinations = utils.generateCombinations(variant_table)
+  if #allCombinations == 0 then
+    -- warn(
+    --   "No variant combinations generated. " ..
+    --   "Either the variant type is invalid or has no properties. " ..
+    --   "In the latter case, use //replace directly.\n" ..
+    --   "Aborting.")
+    warn [[
+No variant combinations generated.
+Either the variant type is invalid or has no properties.
+In the latter case, use //replace directly.
+Aborting.
+    ]]
+  end
 
   for _, combo in ipairs(allCombinations) do
     local propStrings = {}
@@ -54,9 +69,10 @@ local function getCommands(pos1, pos2, from_variant, to_variant, variant_table, 
 end
 
 local function dumpOutput(outPath, outStrList)
-  local outputFile, err = io.open(outPath, 'r+')
+  local outputFile, err = io.open(outPath, 'a')
   if not outputFile then
-    warn("Failed to open output file: " .. err)
+    warn("Failed to open output file: " ..
+      err .. " Skipping log dump.")
     return
   end
   outputFile:write(string.format("wePlus: execute at time %s", os.date("%Y-%m-%d %H:%M:%S")) .. "\n\n\n\n")
@@ -68,12 +84,14 @@ local function dumpOutput(outPath, outStrList)
 end
 
 local function main(args)
-  local we, _ = commands.exec("worldedit version")
-
-  if not we then
-    error(
-      "WorldEdit is not installed or not functioning correctly.\n" ..
-      "Please make sure WorldEdit is functioning properly.")
+  -- like I said below, WorldEdit command return boolean false even on success
+  local _, msgTable = commands.exec("worldedit version")
+  -- hence we check the message instead
+  if msgTable == nil or (#msgTable == 2 and msgTable[1]:match("Unknown or incomplete command, see below for error")) then
+    error [[
+WorldEdit is not installed or not functioning correctly.
+Please make sure WorldEdit is functioning properly.
+    ]]
   end
 
   local function sourcefile_location()
@@ -87,8 +105,12 @@ local function main(args)
   if #args == 1 and args[#args] == "--help" then
     print("Usage: lua " ..
       sourcefile_location() ..
-      " <pos1 x> <pos1 y> <pos1 z> <pos2 x> <pos2 y> <pos2 z> " ..
-      "--from=<variant1> --to=<variant2> --variant=<variant_type>")
+      [[
+<pos1 x> <pos1 y> <pos1 z> <pos2 x> <pos2 y> <pos2 z>
+--from=<variant1> --to=<variant2> --variant=<variant_type>
+[--accept-continue]
+]]
+    )
     print("Example: lua " ..
       sourcefile_location() ..
       " 0 0 0 10 10 10 --from=oak_trapdoor --to=spruce_trapdoor --variant=trapdoor [--accept-continue]")
@@ -119,7 +141,7 @@ local function main(args)
   utils:validate_block(from_variant, to_variant)
   local variant_table = Variants[variant_type] or Specials[variant_type] or nil
   if variant_table == nil then
-    error(string.format("Unknown variant type: '%s'", tostring(variant_type)), 2)
+    error(string.format("Unknown variant type: '%s'", tostring(variant_type)))
   end
 
   local allCommands = getCommands(pos1, pos2, from_variant, to_variant, variant_table, skipWarning)
@@ -128,9 +150,15 @@ local function main(args)
 
   for _, cmd in ipairs(allCommands) do
     output[#output + 1] = cmd
-    local _, msg = commands.exec(cmd)
+    local _, cmdMsg = commands.exec(cmd)
     -- WorldEdit command seems bugged and always return false even on success, hence we write down all output
-    output[#output + 1] = "   " .. (msg[1] or "No message")
+    if cmdMsg ~= nil then
+      for _, line in ipairs(cmdMsg) do
+        output[#output + 1] = "   " .. line
+      end
+    else
+      output[#output + 1] = "   (no output)"
+    end
   end
 
   if not commands.testMode then

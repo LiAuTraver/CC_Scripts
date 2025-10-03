@@ -6,14 +6,14 @@ local Common = {}
 --- Returns a table of "x", "y", and "z" strings.
 ---@return table
 ---@nodiscard
-function Common:axis()
+function Common.axis()
   return { "x", "y", "z" }
 end
 
 --- Returns a table of "true" and "false" strings.
 ---@return table
 ---@nodiscard
-function Common:boolean()
+function Common.boolean()
   return { "true", "false" }
 end
 
@@ -21,7 +21,7 @@ end
 ---@param count number? The number of entries to generate. Defaults to 16.
 ---@return table
 ---@nodiscard
-function Common:numbers(count)
+function Common.numbers(count)
   count = count or 16
   if count <= 0 then
     error("Count must be a positive integer.")
@@ -43,7 +43,7 @@ end
 --- ("north", "south", "east", "west")
 --- @return table
 --- @nodiscard
-function Common:directions()
+function Common.directions()
   return { "north", "south", "east", "west" }
 end
 

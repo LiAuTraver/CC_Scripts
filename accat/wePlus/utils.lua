@@ -60,7 +60,7 @@ end
 ---@param message any
 ---@param ... any
 ---@return nil
-function utils:verify(condition, message, ...)
+function utils.verify(condition, message, ...)
   if not condition then
     error(string.format(message, ...))
   end
@@ -73,13 +73,21 @@ utils.default_test_coord = { x = utils.current_location.x, y = utils.world_heigh
 
 function utils:validate_block(...)
   for _, blockId in ipairs({ ... }) do
-    local success, msg = commands.exec(string.format("execute run setblock %d %d %d %s",
+    local success, msgTable = commands.exec(string.format("execute run setblock %d %d %d %s",
       self.default_test_coord.x,
       self.default_test_coord.y,
       self.default_test_coord.z, blockId))
 
     if not success then
-      error(msg)
+      local msg = ""
+      if msgTable ~= nil then
+        for _, line in ipairs(msgTable) do
+          msg = msg .. line .. " "
+        end
+      else
+        msg = "(no message)"
+      end
+      error(string.format("An error occurred while validating block '%s':\n%s", tostring(blockId), msg))
     end
 
     commands.exec(string.format("setblock %d %d %d air",
@@ -93,7 +101,7 @@ end
 ---   called `reflection` in some typed languages and is AI-generated. Use at your own risk.
 --- @param properties table A table where keys are property names and values are tables of possible values.
 --- @return table tables A list of tables, each representing a unique combination of properties.
-function utils:generateCombinations(properties)
+function utils.generateCombinations(properties)
   local combinations = { {} } -- Start with one empty combination table
   for propName, propValues in pairs(properties) do
     local newCombinations = {}
