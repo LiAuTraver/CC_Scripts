@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug wePlus",
+      "type": "lua-local",
+      "request": "launch",
+      "program": {
+        "lua": "lua",
+        "file": "${workspaceFolder}/wePlus/wePlus.lua"
+      },
+      "args": [
+        "0",
+        "0",
+        "0",
+        "10",
+        "10",
+        "10",
+        "--from=spruce_stairs",
+        "--to=natures_spirit:fir_stairs",
+        "--variant=stairs",
+        "--accept-continue"
+      ]
+    },
+    {
+      "name": "Debug Simple Lua File",
+      "type": "lua-local",
+      "request": "launch",
+      "program": {
+        "lua": "lua",
+        "file": "${file}"
+      },
+      "args": []
+    }
+  ]
+}

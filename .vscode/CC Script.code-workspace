@@ -1,0 +1,18 @@
+{
+  "folders": [
+    {
+      "path": ".."
+    },
+  ],
+  "settings": {
+    "animations.Command-Palette": "Slide",
+    "animations.Install-Method": "Apc Customize UI++",
+    "animations.Auto-Install": true,
+    "[Log]": {
+      "editor.fontSize": 16,
+    },
+    "[log]": {
+      "editor.fontSize": 16,
+    },
+  }
+}
