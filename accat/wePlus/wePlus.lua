@@ -3,9 +3,9 @@
 --- that not respecting block states when replacing blocks.
 
 
-local Variants = require("wePlus.Variants")
-local Specials = require("wePlus.Specials")
-local utils = require("wePlus.utils")
+local Variants = require("accat.wePlus.Variants")
+local Specials = require("accat.wePlus.Specials")
+local utils = require("accat.wePlus.utils")
 
 local function getCommands(pos1, pos2, from_variant, to_variant, variant_table, skipWarning)
   ---@return string[]  -- always returns a table (may be empty)
@@ -53,12 +53,27 @@ local function getCommands(pos1, pos2, from_variant, to_variant, variant_table, 
   return allCommands
 end
 
+local function dumpOutput(outPath, outStrList)
+  local outputFile, err = io.open(outPath, 'r+')
+  if not outputFile then
+    warn("Failed to open output file: " .. err)
+    return
+  end
+  outputFile:write(string.format("wePlus: execute at time %s", os.date("%Y-%m-%d %H:%M:%S")) .. "\n\n\n\n")
+  for _, line in ipairs(outStrList) do
+    outputFile:write(line .. "\n")
+  end
+  outputFile:write("Logging finished.\n")
+  outputFile:close()
+end
+
 local function main(args)
   local we, _ = commands.exec("worldedit version")
 
   if not we then
     error(
-      "WorldEdit is not installed or not functioning correctly.\nPlease make sure WorldEdit is functioning properly.")
+      "WorldEdit is not installed or not functioning correctly.\n" ..
+      "Please make sure WorldEdit is functioning properly.")
   end
 
   local function sourcefile_location()
@@ -119,18 +134,7 @@ local function main(args)
   end
 
   if not commands.testMode then
-    local logFile = io.open(string.format("%s2%s_replog.txt",
-      from_variant, to_variant,
-      os.date("%Y%m%d_%H%M%S")), "w")
-
-    if not logFile then
-      warn("Failed to open log file for writing.")
-    else
-      for _, line in ipairs(output) do
-        logFile:write(line .. "\n")
-      end
-      logFile:close()
-    end
+    dumpOutput(string.format("%s2%s_log.txt", from_variant, to_variant), output)
   end
 
 

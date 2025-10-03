@@ -7,7 +7,7 @@
       "request": "launch",
       "program": {
         "lua": "lua",
-        "file": "${workspaceFolder}/wePlus/wePlus.lua"
+        "file": "${workspaceFolder}/accat/wePlus/wePlus.lua"
       },
       "args": [
         "0",

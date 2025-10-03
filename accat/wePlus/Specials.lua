@@ -1,6 +1,6 @@
 local Specials = {}
 
-local Common = require("wePlus.Common")
+local Common = require("accat.wePlus.Common")
 
 Specials.deepslate = {
   axis = Common:axis(),

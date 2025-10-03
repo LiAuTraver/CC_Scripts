@@ -1,7 +1,7 @@
 -- Properties for different block variants.
 local Variants = {}
 
-local Common = require("wePlus.Common")
+local Common = require("accat.wePlus.Common")
 
 Variants.log = {
   axis = Common:axis(),

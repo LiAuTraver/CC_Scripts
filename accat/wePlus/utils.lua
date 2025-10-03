@@ -3,7 +3,7 @@ local utils = {}
 -- for testing outside of Minecraft
 if commands == nil then
   ---@diagnostic disable-next-line: unused-local
-  local commands = require("stub.commands")
+  local commands = require("accat.stub.commands")
   print("Running in test mode with stub commands.")
 end
 
