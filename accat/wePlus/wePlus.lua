@@ -106,7 +106,7 @@ Please make sure WorldEdit is functioning properly.
     print("Usage: lua " ..
       sourcefile_location() ..
       [[
-<pos1 x> <pos1 y> <pos1 z> <pos2 x> <pos2 y> <pos2 z>
+ <pos1 x> <pos1 y> <pos1 z> <pos2 x> <pos2 y> <pos2 z>
 --from=<variant1> --to=<variant2> --variant=<variant_type>
 [--accept-continue]
 ]]
